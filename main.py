@@ -1,9 +1,10 @@
 import pygame
-
+import sys
 from constants import *
 from player import *
 from asteroid import *
 from asteroidfield import *
+from shot import *
 
 def main():
     pygame.init()
@@ -13,6 +14,8 @@ def main():
     updatable = pygame.sprite.Group()
     drawable = pygame.sprite.Group()
     stroids = pygame.sprite.Group()
+    shots = pygame.sprite.Group()
+    Shot.containers = (shots, updatable, drawable)
     Asteroid.containers = (stroids, updatable, drawable)
     AsteroidField.containers = (updatable)
     Asteroid_Field = AsteroidField()
@@ -29,6 +32,14 @@ def main():
             obj.draw(screen)
         pygame.display.flip()
         dt = clock.tick(60) / 1000
+        for roids in stroids:
+            if roids.collision(player):
+                print("Game over!")
+                sys.exit()
+            for shot in shots:
+                if shot.collision(roids):
+                    shot.kill()
+                    roids.split()
     print("Starting asteroids!")
     print(f'Screen width: {SCREEN_WIDTH}')
     print(f'Screen height: {SCREEN_HEIGHT}')
